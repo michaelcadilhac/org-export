@@ -27,7 +27,7 @@ fi
 for f in "$@"; do
     e=$(<<EOF
 (progn
-  (add-to-list 'load-path "${0:a:h}")
+  (add-to-list 'load-path "${0:a:h}/lib")
   (require 'org-export)
   (let ((my/org-export-fmt $var))
     (my/org-export-file "$f")))
