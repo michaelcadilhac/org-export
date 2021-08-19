@@ -1,0 +1,3 @@
+[submodule "org-setups"]
+	path = org-setups
+	url = https://github.com/michaelcadilhac/org-setups.git
