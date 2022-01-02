@@ -39,6 +39,8 @@
 ;; Make sure SRC blocks use HTML properties if specified.
 (require 'ox-html)
 
+
+
 (defun org-html-src-block (src-block _contents info)
   "Transcode a SRC-BLOCK element from Org to HTML.
   CONTENTS holds the contents of the item.  INFO is a plist holding
@@ -99,7 +101,44 @@
           (setq s (replace-regexp-in-string "@@LF@@" "\\\\\n" s)))
       (apply orig-fun args))))
 
-(advice-add 'org-html-fontify-code :around #'my/bold-prompt)
+(defun my/add-prism-code (orig-fun &rest args)
+  (let ((code (car args))
+        (lang (cadr args)))
+    (if (and code (not lang)
+             (string-prefix-p "$ " code))
+        (concat "<code class=\"language-shell-session\" style=\"padding-left: 0em\">"
+                (org-html-encode-plain-text code)
+                "</code>")
+      (apply orig-fun args))))
+
+
+;(advice-add 'org-html-fontify-code :around #'my/bold-prompt)
+(advice-add 'org-html-fontify-code :around #'my/add-prism-code)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Convert pipes in inline code blocks.
+(defun my/convert-entities (orig-fun &rest args)
+  (let* ((code (car args))
+         (codetxt (org-element-property :value code))
+         (newcode (replace-regexp-in-string "\\\\vert\\b\\({}\\|\\)" "|" codetxt)))
+    (apply orig-fun `(,(org-element-put-property code :value newcode) . ,(cdr args)))))
+
+
+(defun my/add-manpage (orig-fun &rest args)
+  (let* ((codetxt (org-element-property :value (car args))))
+    (if (file-exists-p (concat "/usr/share/man/man1/"
+                               codetxt ".1.gz"))
+        (org-html-link
+         (with-temp-buffer
+           (insert "[[https://man7.org/linux/man-pages/man1/"
+                   codetxt ".1.html][=" codetxt "(1)=]]")
+           (goto-char 0)
+           (org-element-link-parser))
+         (concat "<code>" codetxt "(1)</code>")
+         (nth 3 args))
+      (apply orig-fun args))))
+
+(advice-add 'org-html-code :around #'my/convert-entities)
+(advice-add 'org-html-verbatim :around #'my/add-manpage)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; No postamble
 (setq org-html-postamble nil)
