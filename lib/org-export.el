@@ -146,6 +146,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Use CSS for HTMLIZE, as we're in batch-mode.
 (setq org-html-htmlize-output-type 'css)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Don't ask when evaluating code
+(setq org-confirm-babel-evaluate nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Allow multiline bold/em
 (with-eval-after-load 'org
   (setcar (nthcdr 4 org-emphasis-regexp-components) 6) ;Up to 6 lines, default is just 1
