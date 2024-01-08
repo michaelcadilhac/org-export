@@ -148,6 +148,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Don't ask when evaluating code
 (setq org-confirm-babel-evaluate nil)
+(custom-set-variables '(org-babel-load-languages '((C . t) (emacs-lisp . t)))) ; no setq since it has a setter
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Allow multiline bold/em
 (with-eval-after-load 'org
