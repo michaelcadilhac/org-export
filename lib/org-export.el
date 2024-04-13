@@ -125,8 +125,9 @@
 
 (defun my/add-manpage (orig-fun &rest args)
   (let* ((codetxt (org-element-property :value (car args))))
-    (if (file-exists-p (concat "/usr/share/man/man1/"
-                               codetxt ".1.gz"))
+    (if (and (file-exists-p (concat "/usr/share/man/man1/"
+                                     codetxt ".1.gz"))
+             (file-exists-p (concat "/usr/bin/" codetxt)))
         (org-html-link
          (with-temp-buffer
            (insert "[[https://man7.org/linux/man-pages/man1/"
